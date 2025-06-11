@@ -15,6 +15,7 @@ class Settings(BaseSettings):
 
     # Base de données
     DATABASE_URL: str = "sqlite:///./library.db"
+    SQL_ECHO: bool = False
 
     class Config:
         case_sensitive = True
