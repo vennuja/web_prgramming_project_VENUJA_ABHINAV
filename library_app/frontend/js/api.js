@@ -7,7 +7,7 @@ const Api = {
         };
 
         const token = Auth.getToken();
-        console.log("📡 Token sent in header:", token);
+        console.log("Token sent in header:", token);
 
         if (Auth.isAuthenticated()) {
             headers['Authorization'] = `Bearer ${Auth.getToken()}`;

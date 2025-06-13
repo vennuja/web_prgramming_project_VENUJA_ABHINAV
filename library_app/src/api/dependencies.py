@@ -23,11 +23,22 @@ def get_current_user(
     Dépendance pour obtenir l'utilisateur actuel à partir du token JWT.
     """
     try:
+        print(f"🔐 Raw token: {token}")  # Debug line
+
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[ALGORITHM]
         )
+        print(f"Decoded payload: {payload}")  # Debug line
+
+        # DEBUG: If `sub` is a string, convert it to int
+        if isinstance(payload.get("sub"), str):
+            payload["sub"] = int(payload["sub"])
+
         token_data = TokenPayload(**payload)
-    except (JWTError, ValidationError):
+        print(f"Token data parsed: {token_data}")  # Debug line
+
+    except (JWTError, ValidationError) as e:
+        print(f"JWT or validation error: {e}")  # Debug line
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Impossible de valider les informations d'identification",
@@ -43,6 +54,7 @@ def get_current_user(
             detail="Utilisateur non trouvé",
         )
     return user
+
 
 
 def get_current_active_user(
