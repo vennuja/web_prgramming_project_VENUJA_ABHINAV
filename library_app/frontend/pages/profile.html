@@ -1,0 +1,16 @@
+<h2>Mon Profil</h2>
+<p>Bienvenue, <span id="userName"></span>!</p>
+
+<div>
+    <a href="change-password.html">Changer le mot de passe</a> |
+    <a href="loans.html">Mes emprunts</a>
+</div>
+
+<script>
+    const user = Auth.getUser();
+    if (user) {
+        document.getElementById("userName").textContent = user.full_name || user.email;
+    } else {
+        location.href = "login.html";
+    }
+</script>

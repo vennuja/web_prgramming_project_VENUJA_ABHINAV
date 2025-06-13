@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Books</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/api.js"></script>
+</head>
+<body>
+  <h1>Library Books</h1>
+
+  <!-- Search Bar -->
+  <input type="text" id="searchInput" placeholder="Search books by title or author">
+  <button onclick="searchBooks()">Search</button>
+
+  <!-- Results Container -->
+  <div id="searchResults"></div>
+
+  <script>
+    async function searchBooks() {
+      const query = document.getElementById("searchInput").value;
+      try {
+        const books = await Api.searchBooks(query);
+        displayBooks(books);
+      } catch (error) {
+        console.error("Search failed:", error);
+      }
+    }
+
+    async function loadAllBooks() {
+      try {
+        const books = await Api.getBooks();
+        displayBooks(books);
+      } catch (error) {
+        console.error("Failed to load books:", error);
+      }
+    }
+
+    function displayBooks(books) {
+      const container = document.getElementById("searchResults");
+      container.innerHTML = '';
+
+      if (books.length === 0) {
+        container.innerHTML = "<p>No books found.</p>";
+        return;
+      }
+
+      books.forEach(book => {
+        const bookDiv = document.createElement("div");
+        bookDiv.classList.add("book");
+
+        bookDiv.innerHTML = `
+          <h3>${book.title}</h3>
+          <p><strong>Author:</strong> ${book.author}</p>
+          <p><strong>Year:</strong> ${book.publication_year}</p>
+          <p><strong>Language:</strong> ${book.language || "N/A"}</p>
+          <p><strong>Quantity:</strong> ${book.quantity}</p>
+          <button onclick="borrowBook(${book.id})">Borrow</button>
+        `;
+
+        container.appendChild(bookDiv);
+      });
+    }
+
+    async function borrowBook(bookId) {
+      try {
+        await Api.borrowBook(bookId);
+        alert("Book borrowed successfully!");
+        await loadAllBooks(); // Reload updated quantities
+      } catch (error) {
+        alert("Borrowing failed: " + error.message);
+      }
+    }
+
+    // Load books on page load
+    window.onload = loadAllBooks;
+  </script>
+</body>
+</html>
